@@ -2,7 +2,7 @@
 
 ### You will find in this repo the following stuff
 
-* A demo project written in Java (JSP/Servlet/Spring Boot)
+* A demo project written in Java (ReactJs/Spring Boot)
 * ...
 
 * Description: 
