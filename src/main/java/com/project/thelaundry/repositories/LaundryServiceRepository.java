@@ -1,6 +1,6 @@
 package com.project.thelaundry.repositories;
 
-import com.project.SWP391.entities.Laundry;
+import com.project.thelaundry.entities.Laundry;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
