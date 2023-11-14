@@ -46,8 +46,8 @@ public class User implements UserDetails {
     @Column(name = "status")
     private int status;
 
-//    @Enumerated(EnumType.STRING)
-//    private Role role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
@@ -68,15 +68,15 @@ public class User implements UserDetails {
     }
 
 
-//    @OneToMany(mappedBy = "user")
-//    private Set<Order> orders;
-//
-//    @Getter
-//    @OneToMany(mappedBy = "user")
-//    private Set<Feedback> feedbacks;
-//
-//    @OneToMany(mappedBy = "user")
-//    private Set<Shipment> shipments;
+    @OneToMany(mappedBy = "user")
+    private Set<Order> orders;
+
+    @Getter
+    @OneToMany(mappedBy = "user")
+    private Set<Feedback> feedbacks;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Shipment> shipments;
 
     @Override
     public boolean isAccountNonExpired() {
