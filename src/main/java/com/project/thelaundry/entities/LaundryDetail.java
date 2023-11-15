@@ -34,9 +34,4 @@ public class LaundryDetail implements Serializable {
     @JoinColumn (name = "service_id")
     private Laundry laundryService ;
 
-
-
-
-
-
 }

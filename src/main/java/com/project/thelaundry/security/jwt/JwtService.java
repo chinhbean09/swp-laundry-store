@@ -1,5 +1,4 @@
 package com.project.thelaundry.security.jwt;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

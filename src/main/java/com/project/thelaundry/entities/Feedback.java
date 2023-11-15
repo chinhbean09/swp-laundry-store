@@ -26,8 +26,6 @@ public class Feedback implements Serializable {
     @JoinColumn (name = "service_id")
     private Laundry laundryService;
 
-
-
     @Column(name = "star")
     private int star;
 
