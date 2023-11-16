@@ -49,7 +49,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mapp edBy = "user")
     private List<Token> tokens;
 
 //    @Override
