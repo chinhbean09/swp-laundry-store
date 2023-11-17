@@ -1,4 +1,4 @@
-package com.project.thelaundry.security.utils;
+package com.project.thelaundry.security;
 
 import com.project.thelaundry.repositories.UserRepository;
 import com.project.thelaundry.security.auditing.ApplicationAuditAware;
