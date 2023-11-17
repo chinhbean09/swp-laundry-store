@@ -27,13 +27,12 @@ public class Time implements Serializable {
     @ManyToOne
     @JoinColumn (name = "store_id")
     private Store store;
+
     @ManyToOne
     @JoinColumn (name = "category_id")
     private TimeCategory timeCategory;
+
     @OneToMany(mappedBy = "time")
     private Set<Order> orders;
-
-
-
 }
 

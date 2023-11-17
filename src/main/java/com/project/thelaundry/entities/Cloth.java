@@ -21,10 +21,8 @@ public class Cloth implements Serializable{
     @Nationalized
     private String name;
 
-
     @Column(name = "status")
     private Integer status;
-
 
     @OneToMany(mappedBy = "cloth")
     private List<Laundry> laundryServices;
