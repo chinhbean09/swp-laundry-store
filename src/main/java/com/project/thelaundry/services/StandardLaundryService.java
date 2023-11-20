@@ -1,13 +1,82 @@
 package com.project.thelaundry.services;
 
 
-//@Service
-//@RequiredArgsConstructor
+import com.project.thelaundry.entities.Laundry;
+import com.project.thelaundry.entities.LaundryDetail;
+import com.project.thelaundry.repositories.*;
+import com.project.thelaundry.requests.SpecialServiceRequest;
+import com.project.thelaundry.requests.StandardServiceRequest;
+import com.project.thelaundry.responses.dto.LaundryInfoDTO;
+import com.project.thelaundry.security.utils.SecurityUtils;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
 public class StandardLaundryService {
-//    private  final StoreRepository storeRepository;
-//    private final PriceRepository priceRepository;
-//    private final StandardServiceRepository serviceRepository;
-//
+    private  final StoreRepository storeRepository;
+    private  final LaundryServiceRepository serviceRepository;
+    private final ModelMapper mapper;
+    private  final ClotheRepository clotheRepository;
+    private  final MaterialRepository materialRepository;
+    private final LaundryDetailRepository laundryDetailRepository;
+
+    public LaundryInfoDTO CreateSpecialServiceByStoreId(SpecialServiceRequest request){
+
+
+        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
+        var cloth = clotheRepository.findById(request.getCloth()).orElseThrow();
+        var material = materialRepository.findAllById(request.getMaterials()).stream().collect(Collectors.toList());
+
+
+        var laundry = Laundry.builder().name(request.getName())
+                .store(store)
+                .materials(material)
+                .cloth(cloth)
+                .description(request.getDescription())
+                .imageBanner(request.getImageBanner())
+                .isDeleted(0)
+                .isStandard(false)
+                .build();
+        var newService = serviceRepository.save(laundry);
+        var savedLaundry = serviceRepository.findById(newService.getId()).orElseThrow();
+        var detail = LaundryDetail.builder()
+                .laundryService(savedLaundry)
+                .price(request.getPrice())
+                .unit(request.getUnit())
+                .build();
+        var savedDetail = laundryDetailRepository.save(detail);
+        return  mapToDTO(newService);
+
+    }
+    public LaundryInfoDTO createStandardService(StandardServiceRequest request){
+        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
+        //var prices = request.getDetails().stream().map(priceInWeightDTO -> mapToEntity(priceInWeightDTO)).collect(Collectors.toSet());
+
+
+
+
+        var service = Laundry.builder().store(store)
+                .name(request.getName())
+                .isDeleted(0)
+                .isStandard(true)
+                .description(request.getDescription())
+                .imageBanner(request.getImageBanner())
+                .build();
+
+
+
+        var newService = serviceRepository.save(service);
+//        List<LaundryDetail> newPrices = service.getDetails().stream().peek(priceBasedWeight -> priceBasedWeight.setLaundryService(newService)).collect(Collectors.toList());
+//        var savePrice = laundryDetailRepository.saveAll(newPrices);
+        return mapToDTO(newService);
+    }
+    private LaundryInfoDTO mapToDTO(Laundry dto) {
+        return mapper.map(dto, LaundryInfoDTO.class);
+    }
 //    @Autowired
 //    private final ModelMapper mapper;
 //    public List<StandardServiceInfoDTO> getAllStandardServiceForCustomer(){
