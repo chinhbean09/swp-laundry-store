@@ -48,27 +48,13 @@ public class StoreController {
         return  ResponseEntity.ok().build();
     }
 
-    @PutMapping("/standard-service/update/{id}")
-    @PreAuthorize("hasAuthority('store:update')")
-    public ResponseEntity<LaundryInfoDTO> updateStandardService(@RequestBody StandardServiceRequest request,@PathVariable(name = "id") long id) {
-        return ResponseEntity.ok(service.updateStandardService(request,id));
-    }
-
-    @DeleteMapping("/standard-service/delete/{id}")
-    @PreAuthorize("hasAuthority('store:delete')")
-    public ResponseEntity deleteStandardService(@PathVariable(name = "id") long id) {
-        service.deleteService(id);
-        return ResponseEntity.ok().build();
-
-    }
+//    @PutMapping("/standard-service/update/{id}")
+//    @PreAuthorize("hasAuthority('store:update')")
+//    public ResponseEntity<LaundryInfoDTO> updateStandardService(@RequestBody StandardServiceRequest request,@PathVariable(name = "id") long id) {
+//        return ResponseEntity.ok(service.updateStandardService(request,id));
+//    }
 
 
-    @DeleteMapping("/standard-service/prices/delete/{id}")
-    @PreAuthorize("hasAuthority('store:delete')")
-    public ResponseEntity deletePricesStandardService(@PathVariable(name = "id") long id) {
-        service.deletePrice(id);
-        return ResponseEntity.ok().build();
 
-    }
 }
 
