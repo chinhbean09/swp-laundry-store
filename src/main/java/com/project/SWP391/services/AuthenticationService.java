@@ -1,17 +1,16 @@
 package com.project.SWP391.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.project.SWP391.entities.User;
+import com.project.SWP391.entities.Role;
 import com.project.SWP391.entities.Token;
 import com.project.SWP391.entities.TokenType;
+import com.project.SWP391.entities.User;
 import com.project.SWP391.repositories.FeedbackRepository;
 import com.project.SWP391.repositories.TokenRepository;
 import com.project.SWP391.repositories.UserRepository;
 import com.project.SWP391.requests.AuthenticationRequest;
 import com.project.SWP391.requests.RegisterRequest;
 import com.project.SWP391.responses.AuthenticationResponse;
-
 import com.project.SWP391.responses.dto.UserInfoDTO;
 import com.project.SWP391.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +26,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +37,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+//    private final GoogleIdTokenVerifier verifier;
     @Autowired
     private final ModelMapper mapper;
 
@@ -47,6 +46,7 @@ public class AuthenticationService {
         if(!repository.existsByEmail(request.getEmail())){
             var newUser = User.builder()
                     .fullName(request.getFullName())
+                    .address(request.getAddress())
                     .email(request.getEmail())
                     .phone(request.getPhone())
                     .password(passwordEncoder.encode(request.getPassword()))
@@ -69,6 +69,12 @@ public class AuthenticationService {
       throw new Exception("Email is existed");
     }
 
+    public Boolean checkEmail(String request) throws Exception {
+
+
+        return repository.existsByEmail(request);
+    }
+
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -78,27 +84,96 @@ public class AuthenticationService {
         );
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
-        var feedbacks = feedbackRepository.findAllByUserId(user.getId());
-        var jwtToken = jwtService.generateToken((UserDetails) user);
-        var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
+
+        if(user.getRole().equals(Role.STORE) & user.getStatus() == 1){
+
+            var jwtToken = jwtService.generateToken((UserDetails) user);
+            var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
 
 
-        revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .userInfoDTO(mapper.map(user, UserInfoDTO.class))
-                .build();
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+            return AuthenticationResponse.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .userInfoDTO(mapper.map(user, UserInfoDTO.class))
+                    .build();
+        }else{
+            throw new NullPointerException();
+        }
+
+    }
+
+    public AuthenticationResponse authenticateForCustomer(AuthenticationRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+        var user = repository.findByEmail(request.getEmail())
+                .orElseThrow();
+
+        if(user.getRole().equals(Role.USER) && user.getStatus() == 1 ){
+            var jwtToken = jwtService.generateToken((UserDetails) user);
+            var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
+
+
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+            return AuthenticationResponse.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .userInfoDTO(mapper.map(user, UserInfoDTO.class))
+                    .build();
+
+        }else{
+            throw new NullPointerException();
+        }
+
 
 
     }
 
-    private void saveUserToken(User user, String jwtToken) {
-       Token existedToken = tokenRepository.findByUserId(user.getId());
-        if (existedToken != null){
-            tokenRepository.delete(existedToken);
+    public AuthenticationResponse authenticateForAdmin(AuthenticationRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+        var user = repository.findByEmail(request.getEmail())
+                .orElseThrow();
+
+        if(user.getRole().equals(Role.ADMIN) && user.getStatus() == 1 ){
+            var jwtToken = jwtService.generateToken((UserDetails) user);
+            var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
+
+
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+
+
+            return AuthenticationResponse.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .userInfoDTO(mapper.map(user, UserInfoDTO.class))
+                    .build();
+
+        }else{
+            throw new NullPointerException();
         }
+
+
+
+
+    }
+
+    public void saveUserToken(User user, String jwtToken) {
+//       Token existedToken = tokenRepository.findByUserId(user.getId());
+//        if (existedToken != null){
+//            tokenRepository.delete(existedToken);
+//        }
             var token = Token.builder()
                     .user(user)
                     .token(jwtToken)
@@ -111,7 +186,7 @@ public class AuthenticationService {
 
 
 
-    private void revokeAllUserTokens(User user) {
+    public void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(Math.toIntExact(user.getId()));
         if (validUserTokens.isEmpty())
             return;
@@ -149,5 +224,9 @@ public class AuthenticationService {
             }
         }
     }
+
+
+
+
 
 }

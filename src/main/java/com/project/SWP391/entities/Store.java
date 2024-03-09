@@ -32,6 +32,7 @@ public class Store {
     private String address;
 
     @Column(name = "district")
+    @Nationalized
     private String district;
 
     @Column(name="status")

@@ -10,6 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FeedbackDTO {
+
+    private Long id;
+    private UserInfoDTO user;
     private String content;
     private int star;
+
+    private LaundryInfoDTO laundryService;
 }

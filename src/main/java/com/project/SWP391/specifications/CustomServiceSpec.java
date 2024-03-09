@@ -4,15 +4,11 @@ package com.project.SWP391.specifications;
 import com.project.SWP391.entities.Cloth;
 import com.project.SWP391.entities.Laundry;
 import com.project.SWP391.entities.Material;
-
 import com.project.SWP391.requests.SpecialServiceFilterRequest;
-
-import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.criteria.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class CustomServiceSpec extends SearchSpecification<SpecialServiceFilterRequest, Laundry> {
 
@@ -29,12 +25,12 @@ public class CustomServiceSpec extends SearchSpecification<SpecialServiceFilterR
         Join<Laundry, Cloth> cloth = root.join("cloth", JoinType.INNER);
         List<Predicate> predicates = new ArrayList<Predicate>();
 
-        if (StringUtils.isNotEmpty(search.getName())) {
-            Predicate likeName = criteriaBuilder.like(root.get("name"), "%" + search.getName() + "%" );
-            predicates.add(likeName);
-        }
+//        if (StringUtils.isNotEmpty(search.getDistrict())) {
+//            Predicate likeName = criteriaBuilder.like(root.get("district"), "%" + search.getDistrict() + "%" );
+//            predicates.add(likeName);
+//        }
 
-        if (search.getMaterials() != null) {
+        if (search.getMaterials() != null && !search.getMaterials().isEmpty()) {
 
                 Predicate eqMaterials = criteriaBuilder.in(material.get("id")).value(search.getMaterials());
                 predicates.add(eqMaterials);

@@ -2,10 +2,8 @@ package com.project.SWP391.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -21,14 +19,14 @@ public class LaundryDetail implements Serializable {
     private Long id;
 
     @Column(name = "from_weight")
-    private float from;
+    private Float from;
     @Column(name = "to_weight")
-    private float to;
+    private Float to;
     @Column(name = "unit")
     private String unit;
 
     @Column(name = "price")
-    private float price;
+    private Float price;
 
     @ManyToOne
     @JoinColumn (name = "service_id")

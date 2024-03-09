@@ -1,23 +1,21 @@
 package com.project.SWP391.controllers;
 
-import com.project.SWP391.entities.Cloth;
-import com.project.SWP391.requests.SpecialServiceRequest;
-
+import com.project.SWP391.requests.TimeCategoryRequest;
 import com.project.SWP391.responses.dto.ClothDTO;
 import com.project.SWP391.responses.dto.MaterialDTO;
+import com.project.SWP391.responses.dto.TimeDTO;
 import com.project.SWP391.responses.dto.UserInfoDTO;
-
 import com.project.SWP391.services.ClothService;
 import com.project.SWP391.services.MaterialService;
+import com.project.SWP391.services.TimeCategoryService;
 import com.project.SWP391.services.UserService;
-import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -26,6 +24,7 @@ import java.util.List;
 @CrossOrigin
 @PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
+@Tag(name = "Admin", description = "Admin management APIs")
 public class AdminController {
 
     @Autowired
@@ -33,12 +32,13 @@ public class AdminController {
     private final MaterialService materialService;
     private final ClothService clothService;
 
+    private final TimeCategoryService timeCategoryService;
 
 
-    @GetMapping("/user/all")
+    @GetMapping("/user/all/{id}")
     @PreAuthorize("hasAuthority('admin:read')")
-    public ResponseEntity<List<UserInfoDTO>> getAllUsers() {
-        return ResponseEntity.ok(service.getAllUsers());
+    public ResponseEntity<List<UserInfoDTO>> getAllUsers(@PathVariable (name= "id") Long id) {
+        return ResponseEntity.ok(service.getAllUsers(id));
     }
 
     @GetMapping("/user/{id}")
@@ -85,7 +85,7 @@ public class AdminController {
 
     @PutMapping("/material/update/{id}")
     @PreAuthorize("hasAuthority('admin:update')")
-    @Hidden
+
     public ResponseEntity<MaterialDTO> updateMaterial(@PathVariable Long id, @RequestBody String request) {
         return ResponseEntity.ok(materialService.updateMaterial(request,id));
     }
@@ -93,10 +93,10 @@ public class AdminController {
 
     @DeleteMapping("/material/delete/{id}")
     @PreAuthorize("hasAuthority('admin:delete')")
-    @Hidden
+
     public ResponseEntity<MaterialDTO> deleteMaterial(@PathVariable Long id) {
         materialService.deleteMaterial(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
 
@@ -118,19 +118,34 @@ public class AdminController {
     public ResponseEntity<ClothDTO> updateCloth(@RequestBody String request , @PathVariable Long id) {
         return ResponseEntity.ok(clothService.updateCloth(id,request));
     }
+    @DeleteMapping("/cloth/delete/{id}")
+    @PreAuthorize("hasAuthority('admin:delete')")
+    public ResponseEntity updateCloth( @PathVariable Long id) {
+        clothService.deleteCloth(id);
+        return ResponseEntity.ok().build();
+    }
 
     @PostMapping("/time-category/create")
     @PreAuthorize("hasAuthority('admin:create')")
-    public String createNewTimeCategory() {
-        return "GET:: admin controller";
+    public ResponseEntity<TimeDTO> createNewTimeCategory(@RequestBody TimeCategoryRequest time) {
+
+
+        return ResponseEntity.ok(timeCategoryService.createCategory(time));
     }
 
 
 
-    @DeleteMapping
+    @DeleteMapping("/time-category/delete/{id}")
     @PreAuthorize("hasAuthority('admin:delete')")
-    @Hidden
-    public String delete() {
-        return "DELETE:: admin controller";
+
+    public ResponseEntity delete( @PathVariable Long id) {
+        timeCategoryService.deleteCategory(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/time-category")
+    @PreAuthorize("hasAuthority('admin:read')")
+    public ResponseEntity<List<TimeDTO>> getAllTimeOfService(){
+        return ResponseEntity.ok(timeCategoryService.getAll());
     }
 }

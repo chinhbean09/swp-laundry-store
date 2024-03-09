@@ -1,6 +1,5 @@
 package com.project.SWP391.responses.dto;
 
-import com.project.SWP391.responses.SpecialServiceResponseInItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +14,6 @@ public class ItemInfoDTO {
     private float total;
     private int quantity;
     private float weight;
-    private LaundryInfoDTO laundryServices;
+    private LaundryInfoDTO laundryService;
 
 }

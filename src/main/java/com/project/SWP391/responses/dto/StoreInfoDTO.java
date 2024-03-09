@@ -14,4 +14,8 @@ public class StoreInfoDTO {
     private String address;
     private String district;
     private String phone;
+
+    private UserInfoDTO user;
+
+
 }

@@ -6,7 +6,6 @@ import org.hibernate.annotations.Nationalized;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -68,8 +67,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private Set<Feedback> feedbacks;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Shipment> shipments;
+
 
     @Override
     public boolean isAccountNonExpired() {

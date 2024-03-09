@@ -1,13 +1,10 @@
 package com.project.SWP391.repositories;
 
 import com.project.SWP391.entities.Laundry;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
-
 
 import java.util.List;
 

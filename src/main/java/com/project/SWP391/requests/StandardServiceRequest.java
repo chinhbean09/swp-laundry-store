@@ -1,11 +1,7 @@
 package com.project.SWP391.requests;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.SWP391.responses.dto.LaundryDetailInfoDTO;
 import lombok.*;
-
-import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
@@ -18,7 +14,7 @@ public class StandardServiceRequest {
     private Long id;
     private String name;
     private String description;
-    private List<LaundryDetailInfoDTO> details;
+
     private String imageBanner;
 
 

@@ -4,12 +4,13 @@ package com.project.SWP391.services.ServiceImp;
 import com.project.SWP391.entities.User;
 import com.project.SWP391.repositories.UserRepository;
 import com.project.SWP391.responses.dto.UserInfoDTO;
-import com.project.SWP391.security.utils.SecurityUtils;
+import com.project.SWP391.security.jwt.JwtService;
+import com.project.SWP391.services.AuthenticationService;
 import com.project.SWP391.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.security.SecurityUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,19 +19,22 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImp implements UserService {
+public class    UserServiceImp implements UserService {
 
 
     private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final AuthenticationService service;
 
     @Autowired
     ModelMapper mapper;
 
     @Override
-    public List<UserInfoDTO> getAllUsers() {
+    public List<UserInfoDTO> getAllUsers(Long id) {
         var users = userRepository.findAll();
-        Predicate<User> byDeleted = user-> user.getStatus() != 2;
-        return users.stream().filter(byDeleted).map(user -> mapToDTO(user)).collect(Collectors.toList());
+        Predicate<User> byDeleted = user-> user.getStatus() != 0;
+        Predicate<User> byId = user-> user.getId() != id;
+        return users.stream().filter(byDeleted).filter(byId).map(user -> mapToDTO(user)).collect(Collectors.toList());
     }
 
     @Override
@@ -44,6 +48,14 @@ public class UserServiceImp implements UserService {
         var user = userRepository.findById(id).orElseThrow();
         user.setStatus(status);
         var newUser = userRepository.save(user);
+        if(status == 2){
+            service.revokeAllUserTokens(user);
+        }
+
+        if(status == 1){
+            var jwtToken = jwtService.generateToken((UserDetails) user);
+            service.saveUserToken(user, jwtToken);
+        }
         return mapToDTO(newUser);
     }
 
@@ -62,15 +74,17 @@ public class UserServiceImp implements UserService {
 
     @Override
     public void deleteUser(Long id) {
+
         var user = userRepository.findById(id).orElseThrow();
-        user.setStatus(3);
+        user.setStatus(0);
+        service.revokeAllUserTokens(user);
         var newUser = userRepository.save(user);
 
     }
 
     @Override
-    public UserInfoDTO getCurrentUser() {
-        var user = userRepository.findById(SecurityUtils.getPrincipal().getId()).orElseThrow();
+    public UserInfoDTO getCurrentUser(Long id) {
+        var user = userRepository.findById(id).orElseThrow();
         return mapToDTO(user);
     }
 

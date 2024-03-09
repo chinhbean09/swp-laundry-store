@@ -24,8 +24,9 @@ public class Laundry {
     @Column(name = "name")
     @Nationalized
     private String name;
+
+    @Lob
     @Column(name = "description")
-    @Nationalized
     private String description;
 
     @Column(name = "image")

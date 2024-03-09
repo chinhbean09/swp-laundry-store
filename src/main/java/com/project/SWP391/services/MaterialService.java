@@ -10,5 +10,5 @@ public interface MaterialService {
 
     List<MaterialDTO> getAllMaterials();
 
-    Long deleteMaterial(Long id);
+    void deleteMaterial(Long id);
 }
